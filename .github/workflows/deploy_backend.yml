@@ -1,0 +1,54 @@
+name: Deploy Node.js Backend to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: 15.206.166.10
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          echo "Updating packages and installing Node.js and PM2..."
+          sudo apt-get update
+          sudo apt-get install -y nodejs npm
+          sudo npm install -g pm2
+
+          echo "Fixing directory permissions..."
+          sudo mkdir -p /var/www/html
+          sudo chown -R ubuntu:ubuntu /var/www/html
+
+          cd /var/www/html
+
+          if [ ! -d "LMS-Course-API" ]; then
+            echo "Cloning repository for the first time..."
+            git clone git@github.com:vulture-lines/LMS-Course-API.git
+          fi
+
+          cd LMS-Course-API
+
+          echo "Resetting local changes and pulling latest code..."
+          git reset --hard
+          git pull origin main
+
+          echo "Installing dependencies..."
+          npm install
+
+          echo "Starting or restarting PM2 process..."
+          pm2 describe lms-backend > /dev/null
+          if [ $? -ne 0 ]; then
+            pm2 start server.js --name lms-backend
+          else
+            pm2 restart lms-backend
+          fi
