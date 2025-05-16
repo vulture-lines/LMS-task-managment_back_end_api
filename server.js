@@ -45,6 +45,8 @@ const taskRoutes = require("./routes/Task.router");
 const taskAchieveRoutes = require("./routes/TaskAchieve.router");
 const todosRoutes = require("./routes/Todo.router");
 const uploadRoutes = require("./routes/Upload.router");
+const examRoutes = require("./routes/Exam.router");
+const userAnswerRoutes = require("./routes/UserAnswer.router");
 
 // Use routes
 app.use("/api/auth", authRoutes);
@@ -64,6 +66,8 @@ app.use("/api/tasks",taskRoutes);
 app.use("/api/taskAchievements", taskAchieveRoutes);
 app.use("/api/todo",todosRoutes)
 app.use("/api/upload",uploadRoutes);
+app.use("/api/exam",examRoutes);
+app.use("/api/useranswer",userAnswerRoutes);
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI)

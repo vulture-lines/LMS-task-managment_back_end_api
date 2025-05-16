@@ -60,6 +60,39 @@ router.post("/", authenticate, requireMentor, async (req, res) => {
 
 router.put("/:id", authenticate, requireMentor, async (req, res) => {
   try {
+    const { userId, courseId, certificateUrl } = req.body;
+
+    const user = await User.findById(userId);
+    const course = await Course.findById(courseId);
+    if (!user || !course) {
+      return res.status(404).json({ error: "User or course not found" });
+    }
+
+    const updated = await CourseAchievement.findByIdAndUpdate(
+      req.params.id,
+      {
+        user: userId,
+        username: user.username,
+        courseId,
+        courseTitle: course.title,
+        certificateUrl,
+        completedAt: new Date() // Optional: refresh timestamp when editing
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: "Achievement not found" });
+    }
+
+    res.json({ message: "Achievement updated", updated });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.put("/edit/:id", authenticate, requireMentor, async (req, res) => {
+  try {
     const { certificateUrl } = req.body;
 
     const updated = await CourseAchievement.findByIdAndUpdate(
