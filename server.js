@@ -41,6 +41,7 @@ const messageRoutes = require("./routes/Message.router")
 const notificationRoutes = require("./routes/Notification.router");
 const announceRoutes = require("./routes/Announcement.router");
 const queryRoutes = require("./routes/Query.router");
+const signupLimitRoutes = require("./routes/SignupLimit.router");
 const taskRoutes = require("./routes/Task.router");
 const taskAchieveRoutes = require("./routes/TaskAchieve.router");
 const todosRoutes = require("./routes/Todo.router");
@@ -62,6 +63,7 @@ app.use("/api/message",messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/announcements",announceRoutes);
 app.use("/api/queries", queryRoutes);
+app.use("/api/signuplimit",signupLimitRoutes);
 app.use("/api/tasks",taskRoutes);
 app.use("/api/taskAchievements", taskAchieveRoutes);
 app.use("/api/todo",todosRoutes)
